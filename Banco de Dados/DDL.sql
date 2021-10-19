@@ -1,3 +1,6 @@
+CREATE DATABASE locadora;
+USE DATABASE locadora;
+
 CREATE TABLE `Cliente` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`nome` VARCHAR(50) NOT NULL,
