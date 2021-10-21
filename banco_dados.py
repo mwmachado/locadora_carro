@@ -1,46 +1,66 @@
 import pymysql.cursors
 import getpass
 
-#Solicitação de informações do banco de dados
-print('=' * 31)
-print('Conectando com o banco de dados')
-print('=' * 31)
-print('Por favor, preencha as informações a seguir:')
+def conecta_bd():
+    print('=' * 31)
+    print('Conectando com o banco de dados')
+    print('=' * 31)
+    print('Por favor, preencha as informações a seguir:')
 
-servidor = input('Servidor: ')
-usuario = input ('Usuário: ')
-senha = getpass.getpass('Senha: ')
-banco = input('Banco: ')
+    servidor = input('Servidor: ')
+    usuario = input ('Usuário: ')
+    senha = getpass.getpass('Senha: ')
+    banco = input('Banco: ')
 
-# Conexão com Banco de Dados
-conexao = pymysql.connect(
-    host=servidor, #ip ou o nome da maquina
-    user=usuario,
-    password=senha,
-    database=banco,
-    cursorclass=pymysql.cursors.DictCursor
-)
+    # Conexão com Banco de Dados
+    conexao = pymysql.connect(
+        host=servidor, #ip ou o nome da maquina
+        user=usuario,
+        password=senha,
+        database=banco,
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
-cursor = conexao.cursor()
-print('Banco de dados conectado com sucesso!')
+    
+    print('Banco de dados conectado com sucesso!')
+    return conexao
 
-# Queries
-nome = 'Matheus'
-cpf = '000'
-telefone = '000'
+def cadastra_cliente(cursor, nome, cpf, telefone):
+    comando = f'''
+    INSERT INTO `locadora`.`cliente`(
+        `nome`,
+        `cpf`,
+        `telefone`
+    ) VALUES (
+        "{nome}",
+        "{cpf}",
+        "{telefone}"
+    );
+    '''
 
-## Cadastro
-cadastro_cliente = f'''
-INSERT INTO `locadora`.`cliente`(
-    `nome`,
-    `cpf`,
-    `telefone`
-) VALUES (
-    "{nome}",
-    "{cpf}",
-    "{telefone}"
-);
-'''
+    cursor.execute(comando)
+    print('Cadastro executado com sucesso!')
+    print(f'Cliente {nome} cadastrado!')
+    # return None
+
+def consulta_cliente(cursor):
+    comando = '''
+    SELECT * FROM cliente
+    '''
+
+    cursor.execute(comando)
+
+    resultado = cursor.fetchall()
+    for dic in resultado:
+        print('-'*50)
+        print('ID: ', dic['id'])
+        print('Nome: ', dic['nome'])
+        print(f"CPF: {dic['cpf']}")
+        print(f'Telefone: {dic["telefone"]}')
+    
+    return None
+
+
 # cadastro_carro = ''
 # cadastro_aluguel = ''
 
@@ -54,26 +74,17 @@ INSERT INTO `locadora`.`cliente`(
 # remocao_cliente = 
 
 # Consulta
-consulta_cliente = f'''
-SELECT *
-FROM cliente
-WHERE nome = "{nome}"
-;
-'''
-print(consulta_cliente)
+# consulta_cliente = f'''
+# SELECT *
+# FROM cliente
+# WHERE nome = "{nome}"
+# ;
+# '''
+# print(consulta_cliente)
 
-cursor.execute(consulta_cliente)
-resultado = cursor.fetchall()
+# cursor.execute(consulta_cliente)
+# resultado = cursor.fetchall()
 
-print('Consulta executada com sucesso!')
-print('Resultado: ')
-print(resultado)
-
-
-# Salva as alterações
-
-
-# Fecha a conexão com o Banco de Dados
-cursor.close()
-conexao.close()
-
+# print('Consulta executada com sucesso!')
+# print('Resultado: ')
+# print(resultado)
